@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=landscape">
+    <title>希望给你答案不能消失</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            height: 100vh;
+        }
+        .window {
+            position: absolute;
+            border: 1px solid #ccc;
+            background: white;
+            padding: 10px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            width: 250px;
+        }
+        .top-bar {
+            background: lightgray;
+            padding: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .close-btn {
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .content {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        const messages = ['你还不能死', '朋友不能死', '你有希望', '不要离开我', '不要消失', '我等你', '我看着你', '不要去死亡', '不要消失', '我要你活', '每一行代码诉说思念', '我保护你', '不能消失', '就这样活着别死', '我们友谊联系着', '你有活的资格', '你还是你', '你必须活着'];
+        const colors = ['pink', 'lightpink', 'hotpink', 'deeppink', 'lightcoral', 'violet', 'blue', 'red'];
+        let windowCount = 0;
+        const maxWindows = 30; // 同时显示的最大窗口数
+
+        function createWindow() {
+            if (windowCount >= maxWindows) return; // 控制同时显示的数量
+            windowCount++;
+
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const win = document.createElement('div');
+            win.className = 'window';
+            win.style.left = Math.random() * (window.innerWidth - 250) + 'px';
+            win.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+            win.innerHTML = `
+                <div class="top-bar">
+                    <span>希望提示</span>
+                    <button class="close-btn" onclick="removeWindow(this)">×</button>
+                </div>
+                <div class="content" style="background: ${color}">${msg}</div>
+            `;
+            document.body.appendChild(win);
+
+            // 随机移动
+            setInterval(() => {
+                const dx = (Math.random() - 0.5) * 8;
+                const dy = (Math.random() - 0.5) * 4;
+                const newLeft = parseInt(win.style.left) + dx;
+                const newTop = parseInt(win.style.top) + dy;
+                if (newLeft > 0 && newLeft < window.innerWidth - 250) {
+                    win.style.left = newLeft + 'px';
+                }
+                if (newTop > 0 && newTop < window.innerHeight - 150) {
+                    win.style.top = newTop + 'px';
+                }
+            }, 200);
+
+            // 自动销毁（也可手动关闭），销毁后重新创建新窗口，实现循环
+            setTimeout(() => {
+                win.remove();
+                windowCount--;
+                createWindow(); // 销毁后立即创建新窗口
+            }, Math.random() * 5000 + 3000); // 每个窗口显示3-8秒后销毁
+        }
+
+        function removeWindow(btn) {
+            const win = btn.parentElement.parentElement;
+            win.remove();
+            windowCount--;
+            createWindow(); // 手动关闭后也创建新窗口
+        }
+
+        // 初始化，开始循环创建
+        function startStorm() {
+            for (let i = 0; i < maxWindows; i++) {
+                setTimeout(createWindow, i * 300);
+            }
+        }
+
+        window.onload = startStorm;
+    </script>
+</head>
+<body></body>
+</html>
